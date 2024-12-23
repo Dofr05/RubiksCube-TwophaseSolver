@@ -1,14 +1,14 @@
 # ################### The SolverThread class solves implements the two phase algorithm #################################
-import twophase.face as face
+import face
 import threading as thr
-import twophase.cubie as cubie
-import twophase.symmetries as sy
-import twophase.coord as coord
-from twophase.enums import Move
-import twophase.moves as mv
-import twophase.pruning as pr
+import cubie
+import symmetries as sy
+import coord
+from enums import Move
+import moves as mv
+import pruning as pr
 import time
-from twophase.defs import N_MOVE
+from defs import N_MOVE
 
 
 class SolverThread(thr.Thread):
@@ -216,17 +216,17 @@ def solve(cubestring, max_length=20, timeout=3):
     fc = face.FaceCube()
     s = fc.from_string(cubestring)
     if s != cubie.CUBE_OK:
-        return s  # Error in facelet cube
+        return s  # no valid cubestring, gives invalid facelet cube
     cc = fc.to_cubie_cube()
     s = cc.verify()
     if s != cubie.CUBE_OK:
-        return s  # Error in cubie cube
+        return s  # no valid facelet cube, gives invalid cubie cube
 
     my_threads = []
     s_time = time.monotonic()
 
     # these mutable variables are modidified by all six threads
-    shortest_length = [999]
+    s_length = [999]
     solutions = []
     terminated = thr.Event()
     terminated.clear()
@@ -238,7 +238,7 @@ def solve(cubestring, max_length=20, timeout=3):
     if len(list(set(range(48, 96)) & set(syms))) > 0:  # we have some antisymmetry so we do not search the inverses
         tr = list(filter(lambda x: x < 3, tr))
     for i in tr:
-        th = SolverThread(cc, i % 3, i // 3, max_length, timeout, s_time, solutions, terminated, shortest_length)
+        th = SolverThread(cc, i % 3, i // 3, max_length, timeout, s_time, solutions, terminated, [999])
         my_threads.append(th)
         th.start()
     for t in my_threads:
@@ -286,7 +286,7 @@ def solveto(cubestring, goalstring, max_length=20, timeout=3):
     s_time = time.monotonic()
 
     # these mutable variables are modidified by all six threads
-    s_length = [999]
+    shortest_length = [999]
     solutions = []
     terminated = thr.Event()
     terminated.clear()
@@ -298,7 +298,7 @@ def solveto(cubestring, goalstring, max_length=20, timeout=3):
     if len(list(set(range(48, 96)) & set(syms))) > 0:  # we have some antisymmetry so we do not search the inverses
         tr = list(filter(lambda x: x < 3, tr))
     for i in tr:
-        th = SolverThread(cc, i % 3, i // 3, max_length, timeout, s_time, solutions, terminated, [999])
+        th = SolverThread(cc, i % 3, i // 3, max_length, timeout, s_time, solutions, terminated, shortest_length)
         my_threads.append(th)
         th.start()
     for t in my_threads:

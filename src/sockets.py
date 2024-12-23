@@ -3,7 +3,7 @@
 import socket
 import sys
 import threading
-import twophase.solver as solver
+import solver
 import time
 
 

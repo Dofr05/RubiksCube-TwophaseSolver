@@ -1,9 +1,9 @@
 # ####### The cube on the cubie level is described by the permutation and orientations of corners and edges ############
 
-from twophase.defs import cornerFacelet, edgeFacelet, cornerColor, edgeColor, N_SYM
-from twophase.enums import Color, Corner as Co, Edge as Ed
-import twophase.face
-from twophase.misc import c_nk, rotate_left, rotate_right
+from defs import cornerFacelet, edgeFacelet, cornerColor, edgeColor, N_SYM
+from enums import Color, Corner as Co, Edge as Ed
+import face
+from misc import c_nk, rotate_left, rotate_right
 from random import randrange
 
 
@@ -100,7 +100,7 @@ class CubieCube:
 
     def to_facelet_cube(self):
         """Return a facelet representation of the cube."""
-        fc = twophase.face.FaceCube()
+        fc = face.FaceCube()
         for i in Co:
             j = self.cp[i]  # corner j is at corner position i
             ori = self.co[i]  # orientation of C j at position i
@@ -196,7 +196,7 @@ class CubieCube:
 
     def symmetries(self):
         """Generate a list of the symmetries and antisymmetries of the cubie cube."""
-        from twophase.symmetries import symCube, inv_idx  # not nice here but else we have circular imports
+        from symmetries import symCube, inv_idx  # not nice here but else we have circular imports
         s = []
         d = CubieCube()
         for j in range(N_SYM):
